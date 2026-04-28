@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكاننا الخاص ❤️</title>
+    <style>
+        :root {
+            /* باليتة الألوان الجديدة: لافندر ملكي وذهبي هادئ */
+            --primary: #7b2cbf;    /* بنفسجي ملكي */
+            --secondary: #e0aaff;  /* لافندر فاتح */
+            --accent: #ffb703;     /* ذهبي هادئ */
+            --bg: #f3e5f5;         /* خلفية ناعمة */
+            --text: #3c096c;       /* لون نص داكن */
+            --white: #ffffff;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            background-color: var(--bg);
+            background: linear-gradient(135deg, #f3e5f5 0%, #ede7f6 100%);
+            margin: 0; padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: rtl; overflow-x: hidden;
+        }
+
+        .main-container { width: 100%; display: flex; justify-content: center; min-height: 100vh; position: relative; }
+        .hidden { display: none !important; }
+
+        /* سلاسة الظهور عند التمرير */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 35px;
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px; border-radius: 40px;
+            text-align: center; width: 90vw; max-width: 400px;
+            box-shadow: 0 15px 35px rgba(123, 44, 191, 0.15);
+            margin: 20px auto; z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* شاشة القفل */
+        #passwordScreen {
+            position: fixed; inset: 0; background: var(--bg);
+            display: flex; justify-content: center; align-items: center; z-index: 9999;
+        }
+        #passInput {
+            width: 85%; padding: 15px; border-radius: 20px;
+            border: 2px solid var(--secondary); text-align: center; font-size: 18px; margin: 20px 0; outline: none;
+            color: var(--text);
+        }
+        .btn-login {
+            background: linear-gradient(45deg, var(--primary), #9d4edd);
+            color: white; border: none; padding: 15px 45px; border-radius: 30px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(123, 44, 191, 0.3);
+        }
+
+        /* العداد */
+        .counter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 25px 0; }
+        .unit { background: #f8f0fb; padding: 12px 5px; border-radius: 20px; border: 1px solid var(--secondary); }
+        .unit span { display: block; font-size: 22px; font-weight: bold; color: var(--primary); }
+        .unit p { margin: 0; font-size: 11px; color: var(--text); }
+
+        .btn-surprise {
+            background: linear-gradient(45deg, var(--primary), #9d4edd);
+            color: white; border: none; padding: 18px; border-radius: 25px; width: 100%; font-size: 18px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(123, 44, 191, 0.2);
+        }
+
+        /* الصور */
+        .photo-card { background: var(--white); padding: 12px; border-radius: 30px; box-shadow: 0 10px 25px rgba(123, 44, 191, 0.08); }
+        .photo-card img { width: 100%; border-radius: 20px; display: block; filter: brightness(0.95); transition: 0.3s; }
+        .photo-card img:hover { filter: brightness(1); }
+        .photo-card p { margin: 12px 0 5px; font-weight: 600; color: var(--text); }
+
+        /* المربعات القلابة */
+        .cards-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; perspective: 1200px; margin: 25px 0; }
+        .flip-card { height: 170px; cursor: pointer; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-style: preserve-3d; }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 30px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 15px; }
+        .flip-card-front { background: rgba(255, 255, 255, 0.7); color: var(--primary); border: 2px solid var(--white); box-shadow: 0 8px 20px rgba(123, 44, 191, 0.05); }
+        .flip-card-back { background: linear-gradient(135deg, var(--primary), #5a189a); color: white; transform: rotateY(180deg); text-align: center; font-weight: bold; }
+
+        /* الأزرار والرسالة */
+        .btn-msg { background: var(--accent); color: var(--text); border: none; padding: 20px; border-radius: 25px; width: 100%; font-weight: bold; font-size: 18px; cursor: pointer; margin-top: 20px; box-shadow: 0 5px 15px rgba(255, 183, 3, 0.3); }
+        .btn-back { background: transparent; color: var(--primary); border: 2px solid var(--primary); padding: 10px 30px; border-radius: 20px; cursor: pointer; margin: 30px 0; font-weight: bold; }
+        .msg-box { background: #fffde7; padding: 25px; border-radius: 25px; border: 2px dashed var(--primary); margin-top: 20px; display: none; color: var(--text); line-height: 1.6; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+
+        .music-btn { position: fixed; bottom: 20px; left: 20px; z-index: 1000; background: var(--white); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(123, 44, 191, 0.2); cursor: pointer; font-size: 20px; }
+
+        /* القلوب المتساقطة (بلون بنفسجي وذهبي) */
+        .heart { position: absolute; animation: fall linear forwards; pointer-events: none; z-index: 1; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <div id="passwordScreen">
+        <div class="card">
+            <div style="font-size: 60px; margin-bottom: 10px;">🔐</div>
+            <h2 style="color: var(--text);">مكاننا الخاص ❤️</h2>
+            <input type="password" id="passInput" placeholder="اكتبي كلمة السر...">
+            <button onclick="checkPassword()" class="btn-login">دخول ✨</button>
+            <p id="errorMsg" style="color:red; display:none; margin-top:15px; font-weight: bold;">الكلمة غلط يا روحي! جربي تاني</p>
+        </div>
+    </div>
+
+    <div id="mainContent" class="hidden">
+        <div class="card" id="mainCard">
+            <div style="color:var(--primary); font-weight:bold; letter-spacing: 1px;">✨ 19-04-2024 ✨</div>
+            <h1 style="font-size:30px; margin: 15px 0; color: var(--text);">حكايتنا بدأت ❤️</h1>
+            <div class="counter-grid">
+                <div class="unit"><span id="days">0</span><p>يوم</p></div>
+                <div class="unit"><span id="hours">0</span><p>ساعة</p></div>
+                <div class="unit"><span id="minutes">0</span><p>دقيقة</p></div>
+                <div class="unit"><span id="seconds">0</span><p>ثانية</p></div>
+            </div>
+            <button onclick="showSurprise()" class="btn-surprise">اضغطي هنا للمفاجأة ✨</button>
+        </div>
+
+        <div id="surpriseSection" class="hidden" style="width:100%; max-width:450px; padding: 20px; margin: 0 auto;">
+            <!-- 6 صور -->
+            <div class="photo-card reveal"><img src="https://i.postimg.cc/sDx0cVtq/5526a6cdeefa40bf52e22fd5e99731ea.jpg"><p>من أول لحظة دخلتِ فيها حياتي وأنا حسيت إن ربنا بعتلي رزق كبير أوي. إنتي مش بس حبيبتي، إنتي طفلتي اللي بخاف عليها من الهوا الطاير، وعيني اللي بشوف بيها الدنيا حلوة.💜🫂</p></div>
+            <div class="photo-card reveal"><img src="https://i.postimg.cc/pVq6z913/58918c682d6dfec5636a205135d88142.jpg"><p>ضحكتك دي يا بنبونتي هي اللي بتحلي أيامي. كل ما الدنيا تضيق بيا، بفتكر بس ملامحك وإنتي بتضحكي، وبحس إن كل حاجة هتبقا تمام. خليكي دايماً بتضحكي لأن ضحكتك دي هي حياتي كلها.🫂💜</p></div>
+            <div class="photo-card reveal"><img src="https://i.postimg.cc/m2k6wb00/6ba83780179ae00b2d5a2adf332fc75f.jpg"><p>وجودك في حياتي هو اللي مديني القوة. إنتي السند اللي بجد، والكتف اللي برمي عليه همومي. ربنا يديمك في حياتي نعمة وميحرمنيش من حنيتك عليا أبدًا.🫂💜</p></div>
+            <div class="photo-card reveal"><img src="https://i.postimg.cc/yYxrPVwG/dfbeb3ddb1ee8592dce0e3c7a67e21b9.jpg"><p>يا بنوتي، إنتي مش مجرد بنبونتي اللي بدلعها، إنتي النفس اللي طالع وداخل مني. كل لحظة وإنتي بعيدة عن عيني، بتبقى تقيلة على قلبي، بس ملامحك اللي محفورة في خيالي هي اللي بتصبرني. بوعدك إني هفضل دايمًا السكن ليكي، والأيد اللي بتمسح دموعك، والقلب اللي بيحبك بصدق في كل ثانية. 🫂💜</p></div>
+            <div class="photo-card reveal"><img src="https://i.postimg.cc/28yXwzsp/38fbdb8b7deff27fb8e592ead7629cac.jpg"><p>كل يوم بيعدي وأنا معاكي، بحبك فيه أكتر من اللي قبله. إنتي كبرتِ في قلبي لدرجة إن مفيش مكان لأي حد تاني غير لبنوتي. إنتي الوحيدة اللي ملكتِ قلبي وعقلي وروحي 💜🫂.</p></div>
+            <div class="photo-card reveal"><img src="https://i.postimg.cc/PfbyqmzJ/ziad-maroof-1743230775-musijpgdown-com.jpg"><p>وحشتيني يا بنوتي وحشة توجع القلب، والله العظيم مابتروحيش من بالي ثانية واحدة. أنا تعبت قوي وأنا بجهزلك كل ده وبحاول أطلع كل اللي في قلبي ليكي في شكل مفاجأة، بس كله يهون عشان خاطر عيون بنبونتي المسكرة. أي مجهود وأي سهر يرخص قصاد فرحتك إنتي بس، ومافيش حاجة في الدنيا تعوضني عنك يا أغلى رزق ربنا بعتهولي. ❤️</p></div>
+
+            <!-- المربعات القلابة -->
+            <div class="cards-container reveal">
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front"><div style="font-size:25px;">💜</div><p>دوسى هنا</p><b>الأول</b></div>
+                        <div class="flip-card-back"><p>محبتش</p></div>
+                    </div>
+                </div>
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front"><div style="font-size:25px;">✨</div><p>دوسى هنا</p><b>الثاني</b></div>
+                        <div class="flip-card-back"><p>ولا هحب حد </p></div>
+                    </div>
+                </div>
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front"><div style="font-size:25px;">🔒</div><p>دوسى هنا</p><b>الثالث</b></div>
+                        <div class="flip-card-back"><p>زيك ابدا</p></div>
+                    </div>
+                </div>
+                <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front"><div style="font-size:25px;">💍</div><p>دوسى هنا</p><b>الرابع</b></div>
+                        <div class="flip-card-back"><p>بحبك يا بنوتي</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- زر الرسالة والرجوع -->
+            <div class="reveal" style="text-align:center;">
+                <button onclick="showMsg()" class="btn-msg">دوسي هنا الكلام دا ليكي </button>
+                <div id="msgBox" class="msg-box">
+                    "يا بنبونتي، يمكن في بيننا بلاد ومسافات وطريق طويل، بس والله العظيم إنتي ساكنة جوه قلبي وفي كل تفكيري. الغربة والبعد عمري ما شفتهم حاجز، بالعكس، دول عرفوني إن مفيش ست في الدنيا تملى عيني غيرك، ولا في حد يقدر ياخد مكانك في قلبي ولو لحظة. المسافة دي مجرد وقت وهيمر، وهنجمع كل السنين اللي ضاعت في البعد سوا. خليكي دايمًا فاكرة إنك بنوتي اللي ماليش غيرها، وإن عيني مش شايفة ولا عايزة تشوف حد غيرك يا أحلى بنبوناية في حياتي. بحبك أوي 💜💜🫂"
+                </div>
+                <button onclick="hideSurprise()" class="btn-back">🔙 الرجوع للرئيسية</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="musicBtn" class="music-btn hidden" onclick="toggleMusic()">🔊</div>
+    <audio id="mySong" loop><source src="https://files.catbox.moe/gijcjk.mp3" type="audio/mpeg"></audio>
+
+    <script>
+        // نظام القلوب المتساقطة بألوان متناسقة
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            const colors = ['#7b2cbf', '#e0aaff', '#ffb703', '#ffffff'];
+            heart.innerHTML = '❤️';
+            heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = Math.random() * 20 + 10 + 'px';
+            heart.style.animationDuration = Math.random() * 3 + 2 + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }
+        setInterval(createHeart, 300);
+
+        function checkPassword() {
+            if (document.getElementById('passInput').value === "بحبك") {
+                const audio = document.getElementById('mySong');
+                audio.play().catch(() => {});
+                document.getElementById('passwordScreen').style.display = 'none';
+                document.getElementById('mainContent').classList.remove('hidden');
+                document.getElementById('musicBtn').classList.remove('hidden');
+            } else { 
+                document.getElementById('errorMsg').style.display = 'block'; 
+            }
+        }
+
+        const startDate = new Date(2024, 3, 19); 
+        setInterval(() => {
+            const diff = new Date() - startDate;
+            document.getElementById('days').innerText = Math.floor(diff / 86400000);
+            document.getElementById('hours').innerText = Math.floor((diff / 3600000) % 24);
+            document.getElementById('minutes').innerText = Math.floor((diff / 60000) % 60);
+            document.getElementById('seconds').innerText = Math.floor((diff / 1000) % 60);
+        }, 1000);
+
+        function scrollReveal() {
+            document.querySelectorAll(".reveal").forEach(el => {
+                const elementTop = el.getBoundingClientRect().top;
+                if (elementTop < window.innerHeight - 50) el.classList.add("active");
+            });
+        }
+        window.addEventListener("scroll", scrollReveal);
+
+        function showSurprise() {
+            document.getElementById('mainCard').classList.add('hidden');
+            document.getElementById('surpriseSection').classList.remove('hidden');
+            window.scrollTo(0, 0); 
+            setTimeout(scrollReveal, 300);
+        }
+
+        function hideSurprise() {
+            document.getElementById('surpriseSection').classList.add('hidden');
+            document.getElementById('mainCard').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        function showMsg() {
+            const box = document.getElementById('msgBox');
+            box.style.display = 'block';
+            box.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleMusic() {
+            const audio = document.getElementById('mySong');
+            const btn = document.getElementById('musicBtn');
+            if (audio.paused) { audio.play(); btn.innerText = "🔊"; }
+            else { audio.pause(); btn.innerText = "🔇"; }
+        }
+    </script>
+</body>
+</html>
